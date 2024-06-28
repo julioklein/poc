@@ -1,70 +1,74 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity, Button } from "react-native";
+import EmojiPicker, { type EmojiType } from "rn-emoji-keyboard";
+import * as ContextMenu from "zeego/context-menu";
+// import EmojiBoard from "react-native-emoji-board";
+// import { Reaction, ReactionProvider } from "react-native-reactions";
+// import { NimblePicker, Picker } from "emoji-mart-native";
 
 export default function HomeScreen() {
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+
+  function handleEmojiSelect(emoji: EmojiType) {
+    console.log(emoji);
+  }
+
+  function handlePress() {
+    console.log("Pressed");
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <ContextMenu.Root>
+        <ContextMenu.Trigger action="press">
+          <TouchableOpacity style={styles.button}>
+            <Text>Open Menu</Text>
+          </TouchableOpacity>
+        </ContextMenu.Trigger>
+
+        <ContextMenu.Content loop alignOffset avoidCollisions collisionPadding>
+          <ContextMenu.Label>Menu Options</ContextMenu.Label>
+
+          <ContextMenu.Item key="option1" onSelect={handlePress}>
+            <ContextMenu.ItemTitle>Option 1</ContextMenu.ItemTitle>
+            <ContextMenu.ItemIcon androidIconName="ic_menu_save" />
+          </ContextMenu.Item>
+
+          <ContextMenu.Item key="options2" onSelect={handlePress} destructive>
+            <ContextMenu.ItemTitle>Option 2</ContextMenu.ItemTitle>
+            <ContextMenu.ItemIcon androidIconName="ic_delete" />
+          </ContextMenu.Item>
+        </ContextMenu.Content>
+      </ContextMenu.Root>
+
+      <Button title="Open Emoji Picker" onPress={() => setIsOpen(true)} />
+
+      <EmojiPicker
+        onEmojiSelected={handleEmojiSelect}
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        enableSearchBar
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 32,
+    paddingVertical: 32,
+    gap: 32,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  button: {
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f0effa",
+    paddingHorizontal: 24,
+    borderRadius: 32,
   },
 });
